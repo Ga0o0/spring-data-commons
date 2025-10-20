@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
  * @author Oliver Gierke
  * @since 2.1
  */
+// 用于查找存储库或片段接口的实现类型的配置。
 public interface ImplementationLookupConfiguration extends ImplementationDetectionConfiguration {
 
 	/**
@@ -30,6 +31,7 @@ public interface ImplementationLookupConfiguration extends ImplementationDetecti
 	 *
 	 * @return must not be {@literal null}.
 	 */
+	// 返回要查找的实现的 bean 名称。
 	String getImplementationBeanName();
 
 	/**

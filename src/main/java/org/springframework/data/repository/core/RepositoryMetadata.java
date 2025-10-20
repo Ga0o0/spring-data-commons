@@ -30,6 +30,7 @@ import org.springframework.data.util.TypeInformation;
  * @author Mark Paluch
  * @author Alessandro Nistico
  */
+// 存储库接口的元数据。
 public interface RepositoryMetadata {
 
 	/**
@@ -37,6 +38,7 @@ public interface RepositoryMetadata {
 	 *
 	 * @return the raw id class of the entity managed by the repository.
 	 */
+	// 返回指定类声明的原始 ID 类。
 	default Class<?> getIdType() {
 		return getIdTypeInformation().getType();
 	}
@@ -46,6 +48,7 @@ public interface RepositoryMetadata {
 	 *
 	 * @return the raw domain class the repository is handling.
 	 */
+	// 返回存储库声明的原始域类。
 	default Class<?> getDomainType() {
 		return getDomainTypeInformation().getType();
 	}
@@ -57,6 +60,7 @@ public interface RepositoryMetadata {
 	 *         {@literal null}.
 	 * @since 2.7
 	 */
+	// 返回存储库 ID 类型的 {@link TypeInformation}。
 	TypeInformation<?> getIdTypeInformation();
 
 	/**
@@ -66,6 +70,7 @@ public interface RepositoryMetadata {
 	 * @return the domain class the repository is handling.
 	 * @since 2.7
 	 */
+	// 返回存储库声明管理的域类型的 {@link TypeInformation}。永远不会为 {@literal null}。
 	TypeInformation<?> getDomainTypeInformation();
 
 	/**
@@ -73,6 +78,7 @@ public interface RepositoryMetadata {
 	 *
 	 * @return
 	 */
+	// 返回存储库接口。
 	Class<?> getRepositoryInterface();
 
 	/**
@@ -83,6 +89,7 @@ public interface RepositoryMetadata {
 	 * @return
 	 * @since 2.4
 	 */
+	// 返回存储库中声明的 {@link Method} 返回类型。考虑挂起的方法，不解包组件类型，而是将其留待进一步检查。
 	TypeInformation<?> getReturnType(Method method);
 
 	/**
@@ -93,6 +100,8 @@ public interface RepositoryMetadata {
 	 * @return
 	 * @see #getReturnType(Method)
 	 */
+	// 返回给定 {@link Method} 返回的域类。与 {@link #getReturnType(Method)} 不同，
+	// 此方法还会从 {@link Collection} 和 {@link org.springframework.data.domain.Page} 中提取类型。
 	Class<?> getReturnedDomainClass(Method method);
 
 	/**
@@ -100,6 +109,7 @@ public interface RepositoryMetadata {
 	 *
 	 * @return
 	 */
+	// 返回存储库的 {@link CrudMethods} 元信息。
 	CrudMethods getCrudMethods();
 
 	/**
@@ -107,6 +117,7 @@ public interface RepositoryMetadata {
 	 *
 	 * @return
 	 */
+	// 返回存储库是否为分页存储库。
 	boolean isPagingRepository();
 
 	/**
@@ -118,6 +129,7 @@ public interface RepositoryMetadata {
 	 *         type, must not be {@literal null}.
 	 * @since 1.11
 	 */
+	// 返回当尝试通过域类型查找存储库时，存储库应可被发现的类型集合。
 	Set<Class<?>> getAlternativeDomainTypes();
 
 	/**
@@ -126,6 +138,7 @@ public interface RepositoryMetadata {
 	 * @return
 	 * @since 2.0
 	 */
+	// 返回存储库是否为反应式存储库，即它是否在其某个方法中使用反应式类型。
 	boolean isReactiveRepository();
 
 	/**

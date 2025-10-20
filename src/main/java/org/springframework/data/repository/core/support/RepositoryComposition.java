@@ -360,6 +360,7 @@ public class RepositoryComposition {
 	 * @author Mark Paluch
 	 * @author Christoph Strobl
 	 */
+	// 表示 {@link RepositoryFragment 片段} 的有序列表的值对象。
 	public static class RepositoryFragments implements Streamable<RepositoryFragment<?>> {
 
 		static final RepositoryFragments EMPTY = new RepositoryFragments(Collections.emptyList());

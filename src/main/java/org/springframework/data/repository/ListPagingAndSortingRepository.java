@@ -32,6 +32,8 @@ import org.springframework.data.domain.Sort;
  * @see Page
  * @see CrudRepository
  */
+// 存储库片段提供使用分页和排序抽象检索实体的方法。
+// 这是 {@link PagingAndSortingRepository} 的扩展，在适用的情况下返回 {@link List} 而不是 {@link Iterable}。
 @NoRepositoryBean
 public interface ListPagingAndSortingRepository<T, ID> extends PagingAndSortingRepository<T, ID> {
 

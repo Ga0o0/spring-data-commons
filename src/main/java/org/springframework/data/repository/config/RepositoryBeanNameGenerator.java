@@ -35,6 +35,9 @@ import org.springframework.util.ClassUtils;
  * @author Mark Paluch
  * @author Johannes Englmeier
  */
+// 特殊的 {@link BeanNameGenerator} 用于为 Spring Data 存储库创建 bean 名称。
+// 将委托给 {@link AnnotationBeanNameGenerator}，但让委托与自定义的 {@link BeanDefinition} 配合使用，
+// 以确保检查的是存储库接口，而不是实际的 bean 定义类。
 class RepositoryBeanNameGenerator {
 
 	private final ClassLoader beanClassLoader;

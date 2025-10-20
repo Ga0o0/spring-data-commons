@@ -46,6 +46,16 @@ import org.springframework.util.ReflectionUtils;
  * @since 2.0
  * @see RepositoryComposition
  */
+// 表示存储库片段的值对象。
+// <p>
+// 存储库片段是提供方法签名的独立部分。它们用于构成 {@link RepositoryComposition}。片段可以是纯结构化的，也可以由实现支持。
+// <p>
+// {@link #structural(Class) Structural} 片段不由实现支持，主要用于发现存储库组合的结构并执行验证。
+// <p>
+// {@link #implemented(Object) Implemented} 存储库片段由签名贡献者和实现对象组成。
+// 签名贡献者可以是 {@link #implemented(Class, Object) 接口} 或 {@link #implemented(Object) 实现对象}，为存储库提供可用的签名。
+// <p>
+// 片段是不可变的。
 public interface RepositoryFragment<T> {
 
 	/**

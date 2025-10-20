@@ -24,6 +24,8 @@ package org.springframework.data.repository.config;
  * @soundtrack Elen - Sink like a stone (Elen)
  * @since 1.11
  */
+// 在 {@code @Enable} 注解的 {@code repositoryBaseClass} 属性中使用的占位符类。
+// 配置评估基础结构可以使用此类型来找出未配置特殊存储库基类的情况，并应用默认值。
 public final class DefaultRepositoryBaseClass {
 
 	private DefaultRepositoryBaseClass() {}

@@ -35,6 +35,9 @@ import org.springframework.util.Assert;
  * @author Mark Paluch
  * @since 2.0
  */
+// 用于创建 {@link RepositoryFragments} 的工厂 bean。
+// 此 {@link FactoryBean} 使用名为 {@link #RepositoryFragmentsFactoryBean(List) bean 引用} 的 bean 引用
+// 来查找 {@link RepositoryFragment} bean 并构造 {@link RepositoryFragments}。
 public class RepositoryFragmentsFactoryBean<T>
 		implements FactoryBean<RepositoryFragments>, BeanFactoryAware, InitializingBean {
 

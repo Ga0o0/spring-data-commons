@@ -34,6 +34,7 @@ import org.springframework.util.Assert;
  * @author Johannes Englmeier
  * @since 2.1
  */
+// 已发现的 Repository 片段接口的值对象。
 public class FragmentMetadata {
 
 	private final MetadataReaderFactory factory;

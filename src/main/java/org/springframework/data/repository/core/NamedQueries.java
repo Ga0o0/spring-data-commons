@@ -20,6 +20,7 @@ package org.springframework.data.repository.core;
  *
  * @author Oliver Gierke
  */
+// 可以通过名称查找的 {@link NamedQueries} 映射的抽象。
 public interface NamedQueries {
 
 	/**
@@ -30,6 +31,8 @@ public interface NamedQueries {
 	 * @return
 	 * @throws IllegalArgumentException in case the given name is {@literal null} or empty.
 	 */
+	// 返回映射是否包含指定名称的命名查询。
+	// 如果此方法返回 {@literal true}，则 {@link #getQuery(String)} 可能会返回与指定名称不符的非 {@literal null} 查询。
 	boolean hasQuery(String queryName);
 
 	/**
@@ -39,5 +42,6 @@ public interface NamedQueries {
 	 * @return
 	 * @throws IllegalArgumentException in case no query with the given name exists.
 	 */
+	// 返回具有给定名称的命名查询。
 	String getQuery(String queryName);
 }

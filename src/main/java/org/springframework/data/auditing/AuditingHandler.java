@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
  * @author Christoph Strobl
  * @since 1.5
  */
+// 审计处理程序标记已创建和已修改的实体对象。
 public class AuditingHandler extends AuditingHandlerSupport implements InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(AuditingHandler.class);

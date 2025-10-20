@@ -66,6 +66,10 @@ import org.springframework.util.Assert;
  * @author Mark Paluch
  * @author Johannes Englmeier
  */
+// Spring 的 {@link FactoryBean} 接口适配器，允许通过 Spring 配置轻松设置存储库工厂。
+// <p>
+// 子类可以传递泛型、提供固定域、提供固定标识符类型或提供额外的泛型类型参数。
+// 类型参数必须以与此类中相同的顺序出现（存储库类型、实体类型、标识符类型、额外类型参数）。使用不同的顺序将导致无效的类型定义。
 public abstract class RepositoryFactoryBeanSupport<T extends Repository<S, ID>, S, ID>
 		implements InitializingBean, RepositoryFactoryInformation<S, ID>, FactoryBean<T>, ApplicationEventPublisherAware,
 		BeanClassLoaderAware, BeanFactoryAware, EnvironmentAware {

@@ -29,6 +29,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Oliver Gierke
  * @since 1.6
  */
+// 有关存储库的 CRUD 方法的元信息。
 public interface CrudMethods {
 
 	/**
@@ -77,6 +78,7 @@ public interface CrudMethods {
 	 *
 	 * @return
 	 */
+	// 返回存储库是否公开查找一个方法。
 	boolean hasFindOneMethod();
 
 	/**
@@ -85,6 +87,7 @@ public interface CrudMethods {
 	 * @return the delete method of the repository or {@link Optional#empty()} if not available.
 	 * @see #hasDelete()
 	 */
+	// 返回存储库的删除方法。优先使用按实体删除的方法，而不是按 ID 删除的方法。
 	Optional<Method> getDeleteMethod();
 
 	/**
@@ -92,5 +95,6 @@ public interface CrudMethods {
 	 *
 	 * @return
 	 */
+	// 返回存储库是否公开删除方法。
 	boolean hasDelete();
 }

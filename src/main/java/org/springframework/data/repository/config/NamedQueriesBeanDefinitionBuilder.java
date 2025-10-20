@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
  * @author Oliver Gierke
  * @author Mark Paluch
  */
+// Builder 使用属性为 {@link NamedQueries} 实例创建 {@link BeanDefinition}。
 public class NamedQueriesBeanDefinitionBuilder {
 
 	private final String defaultLocation;
@@ -51,6 +52,7 @@ public class NamedQueriesBeanDefinitionBuilder {
 	 *
 	 * @param locations must not be {@literal null} or empty.
 	 */
+	// 设置（逗号分隔的）位置来加载属性文件以支持 {@link NamedQueries} 实例。
 	public void setLocations(String locations) {
 
 		Assert.hasText(locations, "Locations must not be null nor empty");
@@ -64,8 +66,10 @@ public class NamedQueriesBeanDefinitionBuilder {
 	 * @param source
 	 * @return
 	 */
+	// 从给定的源构建一个新的 {@link BeanDefinition}。
 	public BeanDefinition build(@Nullable Object source) {
 
+		// PropertiesBasedNamedQueriesFactoryBean --> 由 Properties 实例支持的 NamedQueries 实现。
 		BeanDefinitionBuilder namedQueries = BeanDefinitionBuilder
 				.rootBeanDefinition(PropertiesBasedNamedQueriesFactoryBean.class);
 		String locationsToUse = StringUtils.hasText(locations) ? locations : defaultLocation;

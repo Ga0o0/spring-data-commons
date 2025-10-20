@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  * @author Johannes Englmeier
  * @since 2.0
  */
+// 允许筛选集合以选择唯一元素。一旦找到唯一元素，所有其他筛选条件都将被忽略。
 class SelectionSet<T> {
 
 	private final Collection<T> collection;

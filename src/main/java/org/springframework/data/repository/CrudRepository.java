@@ -29,6 +29,9 @@ import org.springframework.dao.OptimisticLockingFailureException;
  * @author Eberhard Wolff
  * @author Jens Schauder
  */
+// 用于对特定类型的存储库进行通用 CRUD 操作的接口。
+// 通过此接口公开的方法允许实体参与生命周期事件，并在适用的情况下启用乐观锁（某些批量操作方法除外）。
+// 因此，模块可以选择在删除或更新实体之前加载它以方便事件处理，并且任何修改方法调用都可能由于乐观锁失败而触发异常。
 @NoRepositoryBean
 public interface CrudRepository<T, ID> extends Repository<T, ID> {
 

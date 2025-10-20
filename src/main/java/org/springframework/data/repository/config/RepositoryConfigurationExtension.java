@@ -33,6 +33,7 @@ import org.springframework.lang.NonNull;
  * @author Christoph Strobl
  * @author John Blum
  */
+// SPI 用于实现存储库 bean 定义注册过程的特定扩展。
 public interface RepositoryConfigurationExtension {
 
 	/**
@@ -41,6 +42,7 @@ public interface RepositoryConfigurationExtension {
 	 * @return will never be {@literal null}.
 	 * @since 3.0
 	 */
+	// 在所有 Spring Data 模块中唯一标识该模块的 {@link String}。不得包含任何空格。
 	default String getModuleIdentifier() {
 
 		return getModuleName().toLowerCase(Locale.ENGLISH).replace(' ', '-');
@@ -62,6 +64,7 @@ public interface RepositoryConfigurationExtension {
 	 * @see org.springframework.beans.factory.aot.BeanRegistrationAotProcessor
 	 * @since 3.0
 	 */
+	// 返回负责在本机运行时提供 Spring Data Repository 基础架构组件所需的 AOT/本机配置的 {@link BeanRegistrationAotProcessor} 类型。
 	@NonNull
 	default Class<? extends BeanRegistrationAotProcessor> getRepositoryAotProcessor() {
 		return RepositoryRegistrationAotProcessor.class;
@@ -79,6 +82,7 @@ public interface RepositoryConfigurationExtension {
 	 * @return will never be {@literal null}.
 	 * @since 1.9
 	 */
+	// 返回通过给定的 {@link RepositoryConfigurationSource} 获得的所有 {@link RepositoryConfiguration}。
 	<T extends RepositoryConfigurationSource> Collection<RepositoryConfiguration<T>> getRepositoryConfigurations(
 			T configSource, ResourceLoader loader, boolean strictMatchesOnly);
 
@@ -87,6 +91,7 @@ public interface RepositoryConfigurationExtension {
 	 *
 	 * @return will never be {@literal null}.
 	 */
+	// 返回 Spring Data 命名查询的默认位置。
 	String getDefaultNamedQueryLocation();
 
 	/**
@@ -94,6 +99,7 @@ public interface RepositoryConfigurationExtension {
 	 *
 	 * @return will never be {@literal null}.
 	 */
+	// 返回要使用的存储库工厂类的 {@link String name}。
 	String getRepositoryFactoryBeanClassName();
 
 	/**
@@ -105,6 +111,8 @@ public interface RepositoryConfigurationExtension {
 	 * @param configurationSource {@link RepositoryConfigurationSource} encapsulating the source (e.g. XML, Annotation) of
 	 *          the repository configuration.
 	 */
+	// 用于为 {@literal repositories} 根节点注册其他 bean 定义的回调。
+	// 这通常包含一些需要一次性设置的 bean，与要创建的仓库数量无关。该回调将在注册任何仓库 bean 定义之前调用。
 	void registerBeansForRoot(BeanDefinitionRegistry registry, RepositoryConfigurationSource configurationSource);
 
 	/**
@@ -113,6 +121,7 @@ public interface RepositoryConfigurationExtension {
 	 * @param builder will never be {@literal null}.
 	 * @param config will never be {@literal null}.
 	 */
+	// 回调以对 {@link BeanDefinition} 进行后期处理，并在必要时调整配置。
 	void postProcess(BeanDefinitionBuilder builder, RepositoryConfigurationSource config);
 
 	/**
@@ -122,6 +131,7 @@ public interface RepositoryConfigurationExtension {
 	 * @param builder will never be {@literal null}.
 	 * @param config will never be {@literal null}.
 	 */
+	// 回调以对由注释构建的 {@link BeanDefinition} 进行后期处理，并在必要时调整配置。
 	void postProcess(BeanDefinitionBuilder builder, AnnotationRepositoryConfigurationSource config);
 
 	/**
@@ -130,5 +140,6 @@ public interface RepositoryConfigurationExtension {
 	 * @param builder will never be {@literal null}.
 	 * @param config will never be {@literal null}.
 	 */
+	// 回调以对从 XML 构建的 {@link BeanDefinition} 进行后期处理，并在必要时调整配置。
 	void postProcess(BeanDefinitionBuilder builder, XmlRepositoryConfigurationSource config);
 }

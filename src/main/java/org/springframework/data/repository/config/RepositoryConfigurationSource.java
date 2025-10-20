@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
  * @author Mark Paluch
  * @author Johannes Englmeier
  */
+// 包含 Spring Data 存储库子系统的可配置选项的接口。
 public interface RepositoryConfigurationSource {
 
 	/**
@@ -50,6 +51,7 @@ public interface RepositoryConfigurationSource {
 	 *
 	 * @return must not be {@literal null}.
 	 */
+	// 返回存储库接口所在的基础包。
 	Streamable<String> getBasePackages();
 
 	/**
@@ -85,6 +87,7 @@ public interface RepositoryConfigurationSource {
 	 *
 	 * @return
 	 */
+	// 返回存储库工厂 bean 类的名称，如果源中未定义，则返回 {@link Optional#empty()}。
 	Optional<String> getRepositoryFactoryBeanClassName();
 
 	/**
@@ -93,6 +96,7 @@ public interface RepositoryConfigurationSource {
 	 * @param loader
 	 * @return
 	 */
+	// 返回要为其创建存储库实例的存储库接口的源 {@link BeanDefinition}。
 	Streamable<BeanDefinition> getCandidates(ResourceLoader loader);
 
 	/**
@@ -136,6 +140,7 @@ public interface RepositoryConfigurationSource {
 	 * @return whether the configuration uses explicit filtering to scan for repository types.
 	 * @since 1.9
 	 */
+	// 返回配置是否使用显式过滤来扫描存储库类型。
 	boolean usesExplicitFilters();
 
 	/**
@@ -153,6 +158,7 @@ public interface RepositoryConfigurationSource {
 	 * @return
 	 * @since 2.0
 	 */
+	// 返回 beanDefinition 的名称。
 	String generateBeanName(BeanDefinition beanDefinition);
 
 	/**
@@ -163,6 +169,7 @@ public interface RepositoryConfigurationSource {
 	 * @return will never be {@literal null}.
 	 * @since 2.1
 	 */
+	// 返回 {@link ImplementationDetectionConfiguration}，用于扫描从此 {@link RepositoryConfigurationSource} 创建的存储库实例的自定义实现。
 	ImplementationDetectionConfiguration toImplementationDetectionConfiguration(MetadataReaderFactory factory);
 
 	/**
@@ -171,6 +178,7 @@ public interface RepositoryConfigurationSource {
 	 * @return
 	 * @since 2.1
 	 */
+	// 定义要使用的存储库{@link BootstrapMode}。
 	BootstrapMode getBootstrapMode();
 
 	/**

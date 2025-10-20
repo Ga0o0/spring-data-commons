@@ -25,6 +25,7 @@ import org.springframework.data.domain.AuditorAware;
  * @author Thomas Darimont
  * @author Oliver Gierke
  */
+// 审计的配置信息。
 public interface AuditingConfiguration {
 
 	/**
@@ -32,6 +33,7 @@ public interface AuditingConfiguration {
 	 *
 	 * @return
 	 */
+	// 返回要使用的 {@link AuditorAware} 实例的 bean 名称。
 	String getAuditorAwareRef();
 
 	/**
@@ -39,6 +41,7 @@ public interface AuditingConfiguration {
 	 *
 	 * @return
 	 */
+	// 返回是否应设置创建和修改日期。默认为 {@literal true}。
 	boolean isSetDates();
 
 	/**
@@ -46,6 +49,7 @@ public interface AuditingConfiguration {
 	 *
 	 * @return
 	 */
+	// 返回实体在创建时是否应标记为已修改。默认为 {@literal true}。
 	boolean isModifyOnCreate();
 
 	/**
@@ -53,5 +57,6 @@ public interface AuditingConfiguration {
 	 *
 	 * @return
 	 */
+	// 返回要使用的 {@link DateTimeProvider} 的 bean 名称。
 	String getDateTimeProviderRef();
 }

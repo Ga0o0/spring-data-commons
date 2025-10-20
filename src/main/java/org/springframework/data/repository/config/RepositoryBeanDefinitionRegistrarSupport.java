@@ -63,6 +63,7 @@ public abstract class RepositoryBeanDefinitionRegistrarSupport
 	 *             instead.
 	 * @see ConfigurationClassPostProcessor#IMPORT_BEAN_NAME_GENERATOR
 	 */
+	// 出于向后兼容的原因，转发到 {@link #registerBeanDefinitions(AnnotationMetadata, BeanDefinitionRegistry, BeanNameGenerator)}，以便下游模块中的测试不会意外调用超类型的默认实现。
 	@Override
 	@Deprecated
 	public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
@@ -77,20 +78,25 @@ public abstract class RepositoryBeanDefinitionRegistrarSupport
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		Assert.notNull(resourceLoader, "ResourceLoader must not be null");
 
-		// Guard against calls for sub-classes
+		// Guard against calls for sub-classes --> 译文：防止调用子类
 		if (metadata.getAnnotationAttributes(getAnnotation().getName()) == null) {
 			return;
 		}
 
+		// 根据给定的 AnnotationMetadata 和注释创建一个新的 AnnotationRepositoryConfigurationSource。
 		AnnotationRepositoryConfigurationSource configurationSource = new AnnotationRepositoryConfigurationSource(metadata,
 				getAnnotation(), resourceLoader, environment, registry, generator);
 
+		// 返回 RepositoryConfigurationExtension 用于存储特定的回调和 BeanDefinition 后处理。
 		RepositoryConfigurationExtension extension = getExtension();
+		// 注册给定的 RepositoryConfigurationExtension 以指示特定存储（通过扩展的具体类型表示）的存储库配置已发生。
 		RepositoryConfigurationUtils.exposeRegistration(extension, registry, configurationSource);
 
+		// 为给定的 RepositoryConfigurationSource、ResourceLoader 和 Environment 创建一个新的 RepositoryConfigurationDelegate。
 		RepositoryConfigurationDelegate delegate = new RepositoryConfigurationDelegate(configurationSource, resourceLoader,
 				environment);
 
+		// 在给定的 BeanDefinitionRegistry 中注册发现的存储库。
 		delegate.registerRepositoriesIn(registry, extension);
 	}
 
@@ -110,5 +116,6 @@ public abstract class RepositoryBeanDefinitionRegistrarSupport
 	 * @see RepositoryConfigurationExtensionSupport
 	 * @return
 	 */
+	// 返回 {@link RepositoryConfigurationExtension} 用于存储特定的回调和 {@link BeanDefinition} 后处理。
 	protected abstract RepositoryConfigurationExtension getExtension();
 }

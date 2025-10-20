@@ -36,6 +36,11 @@ import org.springframework.lang.Nullable;
  * @author Mark Paluch
  * @since 3.0
  */
+// 用于创建 {@link PropertiesBasedNamedQueries} 的工厂 Bean。
+// <p>
+// 此 FactoryBean 支持从属性文件加载和/或设置本地属性。创建的 Properties 实例将由加载的值和本地值合并而成。如果未设置位置和本地属性，初始化时将抛出异常。
+// <p>
+// 可以在每次请求时创建单例或新对象。默认为单例。
 public class PropertiesBasedNamedQueriesFactoryBean extends PropertiesLoaderSupport
 		implements FactoryBean<PropertiesBasedNamedQueries>, InitializingBean {
 

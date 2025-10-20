@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
  *
  * @author Oliver Gierke
  */
+// 由 {@link Properties} 实例支持的 {@link NamedQueries} 实现。
 public class PropertiesBasedNamedQueries implements NamedQueries {
 
 	private static final String NO_QUERY_FOUND = "No query with name %s found; Make sure you call hasQuery(…) before calling this method";

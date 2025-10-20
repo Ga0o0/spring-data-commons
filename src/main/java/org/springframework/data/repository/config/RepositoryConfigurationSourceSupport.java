@@ -35,6 +35,7 @@ import org.springframework.util.Assert;
  * @author Peter Rietzler
  * @author Jens Schauder
  */
+// 实现 {@link RepositoryConfigurationSource}s 的基类。
 public abstract class RepositoryConfigurationSourceSupport implements RepositoryConfigurationSource {
 
 	protected static final String DEFAULT_REPOSITORY_IMPL_POSTFIX = "Impl";
@@ -50,6 +51,7 @@ public abstract class RepositoryConfigurationSourceSupport implements Repository
 	 * @param classLoader must not be {@literal null}.
 	 * @param registry must not be {@literal null}.
 	 */
+	// 使用给定的环境创建一个新的 {@link RepositoryConfigurationSourceSupport}。
 	public RepositoryConfigurationSourceSupport(Environment environment, ClassLoader classLoader,
 			BeanDefinitionRegistry registry, BeanNameGenerator generator) {
 
@@ -65,7 +67,9 @@ public abstract class RepositoryConfigurationSourceSupport implements Repository
 	@Override
 	public Streamable<BeanDefinition> getCandidates(ResourceLoader loader) {
 
+		// 使用给定的 TypeFilter 创建一个新的 RepositoryComponentProvider 来包含要拾取的组件。
 		RepositoryComponentProvider scanner = new RepositoryComponentProvider(getIncludeFilters(), registry);
+		// 控制是否应将嵌套的内部类 Repository 接口定义用于自动发现。默认值为 false。
 		scanner.setConsiderNestedRepositoryInterfaces(shouldConsiderNestedRepositories());
 		scanner.setEnvironment(environment);
 		scanner.setResourceLoader(loader);
@@ -82,6 +86,7 @@ public abstract class RepositoryConfigurationSourceSupport implements Repository
 	 *
 	 * @return must not be {@literal null}.
 	 */
+	// 返回 {@link TypeFilter} 以定义在扫描存储库时要排除的类型。默认实现返回一个空集合。
 	@Override
 	public Streamable<TypeFilter> getExcludeFilters() {
 		return Streamable.empty();
@@ -98,6 +103,7 @@ public abstract class RepositoryConfigurationSourceSupport implements Repository
 	 *
 	 * @return must not be {@literal null}.
 	 */
+	// 返回 {@link TypeFilter} 以定义扫描存储库时要包含的类型。默认实现返回一个空集合。
 	protected Iterable<TypeFilter> getIncludeFilters() {
 		return Collections.emptySet();
 	}
@@ -108,6 +114,7 @@ public abstract class RepositoryConfigurationSourceSupport implements Repository
 	 *
 	 * @return {@literal true} if the container should look for nested repository interface definitions.
 	 */
+	// 返回我们是否应该考虑嵌套存储库，即嵌套在其他类中的存储库接口定义。
 	public boolean shouldConsiderNestedRepositories() {
 		return false;
 	}

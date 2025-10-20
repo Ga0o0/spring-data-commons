@@ -65,6 +65,7 @@ public abstract class ClassUtils {
 	 * @param classLoader the class loader to use (can be {@literal null}, which indicates the default class loader).
 	 * @return the {@link Class} or {@literal null} in case the class can't be loaded for any reason.
 	 */
+	// 使用给定的 {@link ClassLoader} 加载具有给定名称的类。
 	@Nullable
 	public static Class<?> loadIfPresent(String name, @Nullable ClassLoader classLoader) {
 

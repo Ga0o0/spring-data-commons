@@ -54,6 +54,7 @@ public abstract class AbstractRepositoryMetadata implements RepositoryMetadata {
 	 *
 	 * @param repositoryInterface must not be {@literal null} and must be an interface.
 	 */
+	// 创建一个新的{@link AbstractRepositoryMetadata}。
 	public AbstractRepositoryMetadata(Class<?> repositoryInterface) {
 
 		Assert.notNull(repositoryInterface, "Given type must not be null");
@@ -72,11 +73,16 @@ public abstract class AbstractRepositoryMetadata implements RepositoryMetadata {
 	 * @since 1.9
 	 * @return
 	 */
+	// 为给定的存储库接口创建一个新的 {@link RepositoryMetadata}。
 	public static RepositoryMetadata getMetadata(Class<?> repositoryInterface) {
 
 		Assert.notNull(repositoryInterface, "Repository interface must not be null");
 
-		return Repository.class.isAssignableFrom(repositoryInterface) ? new DefaultRepositoryMetadata(repositoryInterface)
+		// isAssignableFrom（） -> 确定此 Class 对象表示的类或接口是否与指定 Class 参数表示的类或接口相同，或者是其超类或超接口。
+		return Repository.class.isAssignableFrom(repositoryInterface) ?
+				// 为给定的存储库接口创建一个新的 DefaultRepositoryMetadata。
+				new DefaultRepositoryMetadata(repositoryInterface)
+				// 创建一个新的 AnnotationRepositoryMetadata 实例，从 RepositoryDefinition 注释中查找存储库类型。
 				: new AnnotationRepositoryMetadata(repositoryInterface);
 	}
 

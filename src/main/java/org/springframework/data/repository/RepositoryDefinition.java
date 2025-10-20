@@ -31,6 +31,7 @@ import org.springframework.stereotype.Indexed;
  * @see Repository
  * @author Oliver Gierke
  */
+// 用于划分应创建存储库代理的接口的注解。使用 {@link RepositoryDefinition} 注解接口将产生与扩展 {@link Repository} 相同的行为。
 @Indexed
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -44,6 +45,7 @@ public @interface RepositoryDefinition {
 	 * @see Repository
 	 * @return
 	 */
+	// 存储库管理的域类。相当于 {@link Repository} 中的 T 类型参数。
 	Class<?> domainClass();
 
 	/**
@@ -52,5 +54,6 @@ public @interface RepositoryDefinition {
 	 * @see Repository
 	 * @return
 	 */
+	// 实体的 ID 类，由仓库管理。等同于 {@link Repository} 中的 ID 类型参数。
 	Class<?> idClass();
 }

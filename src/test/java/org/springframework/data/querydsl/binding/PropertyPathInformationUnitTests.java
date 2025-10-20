@@ -18,7 +18,7 @@ package org.springframework.data.querydsl.binding;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.data.querydsl.QUser;
+import org.springframework.data.querydsl.suffix.QUser;
 import org.springframework.data.querydsl.User;
 
 /**

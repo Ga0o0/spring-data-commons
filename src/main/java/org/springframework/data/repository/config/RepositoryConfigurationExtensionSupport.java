@@ -79,9 +79,13 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 
 		Set<RepositoryConfiguration<T>> result = new HashSet<>();
 
+		// configSource.getCandidates(loader) -> 返回要为其创建存储库实例的存储库接口的源 BeanDefinition
 		for (BeanDefinition candidate : configSource.getCandidates(loader)) {
 
+			// 根据给定的 RepositoryConfigurationSource 和接口名称创建一个实际的 RepositoryConfiguration 实例。
+			// ===================  这里使用的 RepositoryConfiguration 实现类是 DefaultRepositoryConfiguration ===================
 			RepositoryConfiguration<T> configuration = getRepositoryConfiguration(candidate, configSource);
+			// 使用给定的 ClassLoader 加载给定 RepositoryConfiguration 中包含的存储库接口。
 			Class<?> repositoryInterface = loadRepositoryInterface(configuration,
 					getConfigurationInspectionClassLoader(loader));
 
@@ -90,11 +94,13 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 				continue;
 			}
 
+			// 为给定的存储库接口创建一个新的 {RepositoryMetadata
 			RepositoryMetadata metadata = AbstractRepositoryMetadata.getMetadata(repositoryInterface);
 
 			boolean qualifiedForImplementation = !strictMatchesOnly || configSource.usesExplicitFilters()
 					|| isStrictRepositoryCandidate(metadata);
 
+			// useRepositoryConfiguration(metadata) -> 返回是否使用具有给定元数据的存储库配置。
 			if (qualifiedForImplementation && useRepositoryConfiguration(metadata)) {
 				result.add(configuration);
 			}
@@ -120,6 +126,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 *             {@link #getModuleName()} directly or both methods if the default translation from name to identifier as
 	 *             defined in {@link RepositoryConfigurationExtension#getModuleIdentifier()} doesn't suit you.
 	 */
+	// 返回用于创建 Spring Data 命名查询的默认位置的模块的前缀。
 	@Deprecated
 	protected abstract String getModulePrefix();
 
@@ -139,6 +146,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @return
 	 * @since 1.9
 	 */
+	// 在评估存储库接口以进行存储分配时，返回用于扫描域类型的注释。模块应返回明确标识由存储管理的域类型的注释。
 	protected Collection<Class<? extends Annotation>> getIdentifyingAnnotations() {
 		return Collections.emptySet();
 	}
@@ -149,6 +157,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @return
 	 * @since 1.9
 	 */
+	// 在检查存储库是否严格匹配时，返回指示存储匹配的类型。
 	protected Collection<Class<?>> getIdentifyingTypes() {
 		return Collections.emptySet();
 	}
@@ -161,6 +170,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @return the {@link ClassLoader} for repository interfaces configuration inspection.
 	 * @since 2.1
 	 */
+	// 返回 {@link ClassLoader} 以加载存储库接口进行配置检查。子类可以重写此方法以提供自定义的类加载器。
 	@Nullable
 	protected ClassLoader getConfigurationInspectionClassLoader(ResourceLoader loader) {
 		return loader.getClassLoader();
@@ -259,6 +269,8 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @param configSource will never be {@literal null}.
 	 * @return
 	 */
+	// 根据给定的 {@link RepositoryConfigurationSource} 和接口名称创建一个实际的 {@link RepositoryConfiguration} 实例。
+	// 默认为 {@link DefaultRepositoryConfiguration}，但允许子类覆盖此实例以自定义行为。
 	protected <T extends RepositoryConfigurationSource> RepositoryConfiguration<T> getRepositoryConfiguration(
 			BeanDefinition definition, T configSource) {
 		return new DefaultRepositoryConfiguration<>(configSource, definition, this);
@@ -275,13 +287,18 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @return
 	 * @since 1.9
 	 */
+	// 返回给定的存储库元数据是否是严格存储库检测模式下创建 bean 定义的候选对象。
+	// 默认实现会检查一组知名注解所管理的域类型（参见 {@link #getIdentifyingAnnotations()}）。
+	// 如果未找到任何注解，则丢弃该候选对象。实现应该确保，只有当它们真正确定传递给该方法的接口确实是存储接口时，才返回 {@literal true}。
 	protected boolean isStrictRepositoryCandidate(RepositoryMetadata metadata) {
 
 		if (noMultiStoreSupport) {
 			return false;
 		}
 
+		// 在检查存储库是否严格匹配时，返回指示存储匹配的类型。
 		Collection<Class<?>> types = getIdentifyingTypes();
+		// 在评估存储库接口以进行存储分配时，返回用于扫描域类型的注释。模块应返回明确标识由存储管理的域类型的注释。
 		Collection<Class<? extends Annotation>> annotations = getIdentifyingAnnotations();
 		String moduleName = getModuleName();
 
@@ -293,6 +310,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 			}
 		}
 
+		// 返回存储库接口
 		Class<?> repositoryInterface = metadata.getRepositoryInterface();
 
 		for (Class<?> type : types) {
@@ -301,6 +319,7 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 			}
 		}
 
+		// 返回存储库声明的原始域类
 		Class<?> domainType = metadata.getDomainType();
 
 		for (Class<? extends Annotation> annotationType : annotations) {
@@ -339,6 +358,9 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 *           default.
 	 * @return
 	 */
+	// 返回是否使用具有给定元数据的存储库配置。
+	// 对于 {@link RepositoryMetadata#isReactiveRepository() 反应式存储库}，默认为 {@literal true}，
+	// 否则为 {@link InvalidDataAccessApiUsageException}。需要提供反应式存储库的存储模块必须覆盖此方法。
 	protected boolean useRepositoryConfiguration(RepositoryMetadata metadata) {
 
 		if (metadata.isReactiveRepository()) {
@@ -358,10 +380,12 @@ public abstract class RepositoryConfigurationExtensionSupport implements Reposit
 	 * @param classLoader can be {@literal null}.
 	 * @return the repository interface or {@literal null} if it can't be loaded.
 	 */
+	// 使用给定的 {@link ClassLoader} 加载给定 {@link RepositoryConfiguration} 中包含的存储库接口。
 	@Nullable
 	private Class<?> loadRepositoryInterface(RepositoryConfiguration<?> configuration,
 			@Nullable ClassLoader classLoader) {
 
+		// 返回存储库的接口名称
 		String repositoryInterface = configuration.getRepositoryInterface();
 
 		try {

@@ -31,6 +31,7 @@ import org.springframework.util.ClassUtils;
  * @author Johannes Englmeier
  * @since 2.1
  */
+// 表达用于检测存储库和存储库片段的实现类的配置。
 public interface ImplementationDetectionConfiguration {
 
 	/**
@@ -38,6 +39,7 @@ public interface ImplementationDetectionConfiguration {
 	 *
 	 * @return must not be {@literal null}.
 	 */
+	// 返回用于计算实现类型名称的后缀。
 	String getImplementationPostfix();
 
 	/**

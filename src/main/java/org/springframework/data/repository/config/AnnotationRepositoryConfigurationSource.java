@@ -55,6 +55,7 @@ import org.springframework.util.StringUtils;
  * @author Florian Cramer
  * @author Christoph Strobl
  */
+// 基于注释的 {@link RepositoryConfigurationSource}。
 public class AnnotationRepositoryConfigurationSource extends RepositoryConfigurationSourceSupport {
 
 	private static final String REPOSITORY_IMPLEMENTATION_POSTFIX = "repositoryImplementationPostfix";
@@ -104,10 +105,12 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 	 * @param registry must not be {@literal null}.
 	 * @param importBeanNameGenerator can be {@literal null}.
 	 */
+	// 根据给定的 {@link AnnotationMetadata} 和注释创建一个新的 {@link AnnotationRepositoryConfigurationSource}。
 	public AnnotationRepositoryConfigurationSource(AnnotationMetadata metadata, Class<? extends Annotation> annotation,
 			ResourceLoader resourceLoader, Environment environment, BeanDefinitionRegistry registry,
 			@Nullable BeanNameGenerator importBeanNameGenerator) {
 
+		// 使用给定的环境创建一个新的 RepositoryConfigurationSourceSupport
 		super(environment, ConfigurationUtils.getRequiredClassLoader(resourceLoader), registry,
 				configuredOrDefaultBeanNameGenerator(metadata, annotation,
 						ConfigurationUtils.getRequiredClassLoader(resourceLoader), importBeanNameGenerator));
@@ -116,9 +119,10 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 		Assert.notNull(annotation, "Annotation must not be null");
 		Assert.notNull(resourceLoader, "ResourceLoader must not be null");
 
+		// 获取注解的属性
 		Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotation.getName());
 
-		if (annotationAttributes == null) {
+		if (annotationAttributes == null) { // 无法获取注解属性
 			throw new IllegalStateException(String.format("Unable to obtain annotation attributes for %s", annotation));
 		}
 
@@ -127,7 +131,7 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 		this.configMetadata = metadata;
 		this.typeFilterFunction = it -> TypeFilterUtils.createTypeFiltersFor(it, environment, resourceLoader, registry)
 				.stream();
-		this.hasExplicitFilters = hasExplicitFilters(attributes);
+		this.hasExplicitFilters = hasExplicitFilters(attributes); // 返回是否存在包含或排除过滤器的明确配置。
 	}
 
 	@Override
@@ -305,6 +309,7 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 	 * @param attributes must not be {@literal null}.
 	 * @return
 	 */
+	// 返回是否存在包含或排除过滤器的明确配置。
 	private static boolean hasExplicitFilters(AnnotationAttributes attributes) {
 
 		return Stream.of(INCLUDE_FILTERS, EXCLUDE_FILTERS) //
@@ -315,6 +320,7 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 			Class<? extends Annotation> annotation, ClassLoader beanClassLoader,
 			@Nullable BeanNameGenerator importBeanNameGenerator) {
 
+		// 如果存在，则获取已配置的 BeanNameGenerator。
 		BeanNameGenerator beanNameGenerator = getConfiguredBeanNameGenerator(metadata, annotation, beanClassLoader);
 
 		if (beanNameGenerator != null) {
@@ -336,6 +342,9 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 	 *         otherwise.
 	 * @since 2.2
 	 */
+	// 如果给定的生成器为 {@literal null} 或它是在 {@link ConfigurationClassPostProcessor} 的 {@code importBeanNameGenerator} 中本地声明的生成器，
+	// 则返回要使用的 {@link BeanNameGenerator}，并回退到 {@link AnnotationBeanNameGenerator}。
+	// 这是为了确保我们仅在自定义的情况下才使用给定的 {@link BeanNameGenerator}。
 	private static BeanNameGenerator defaultBeanNameGenerator(@Nullable BeanNameGenerator generator) {
 
 		return generator == null || ConfigurationClassPostProcessor.IMPORT_BEAN_NAME_GENERATOR.equals(generator) //
@@ -350,6 +359,7 @@ public class AnnotationRepositoryConfigurationSource extends RepositoryConfigura
 	 *          configured as String instead of a Class instance.
 	 * @return the bean name generator or {@literal null} if not configured.
 	 */
+	// 如果存在，则获取已配置的 {@link BeanNameGenerator}。
 	@Nullable
 	@SuppressWarnings("unchecked")
 	private static BeanNameGenerator getConfiguredBeanNameGenerator(AnnotationMetadata metadata,

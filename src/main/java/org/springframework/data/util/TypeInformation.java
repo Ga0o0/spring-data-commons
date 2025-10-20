@@ -39,6 +39,7 @@ import org.springframework.util.Assert;
  * @author Johannes Englmeier
  * @author Christoph Strobl
  */
+// 用于访问属性类型并在过程中解析泛型的接口。从 {@link ClassTypeInformation} 开始，您可以使用 {@link #getProperty(String)} 遍历属性，以访问类型信息。
 @SuppressWarnings({ "deprecation", "rawtypes" })
 public interface TypeInformation<S> {
 

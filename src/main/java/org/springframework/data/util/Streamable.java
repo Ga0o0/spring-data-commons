@@ -38,6 +38,7 @@ import org.springframework.util.Assert;
  * @author Christoph Strobl
  * @since 2.0
  */
+// 简单的界面可以简化 {@link Iterable} 的流式传输。
 @FunctionalInterface
 public interface Streamable<T> extends Iterable<T>, Supplier<Stream<T>> {
 

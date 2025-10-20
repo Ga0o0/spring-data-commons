@@ -44,6 +44,8 @@ import org.springframework.util.ReflectionUtils;
  * @author Thomas Darimont
  * @since 1.6
  */
+// 默认实现基于给定的 {@link RepositoryMetadata} 发现 CRUD 方法。
+// 不仅会检测 {@link CrudRepository} 中公开的方法，还会检测与 {@link CrudRepository} 签名兼容的手动编写的 CRUD 方法。
 public class DefaultCrudMethods implements CrudMethods {
 
 	private static final String FIND_ONE = "findById";
@@ -63,6 +65,7 @@ public class DefaultCrudMethods implements CrudMethods {
 	 *
 	 * @param metadata must not be {@literal null}.
 	 */
+	// 使用给定的 {@link RepositoryMetadata} 创建一个新的 {@link DefaultCrudMethods}。
 	public DefaultCrudMethods(RepositoryMetadata metadata) {
 
 		Assert.notNull(metadata, "RepositoryInformation must not be null");
@@ -158,6 +161,11 @@ public class DefaultCrudMethods implements CrudMethods {
 	 * @param metadata must not be {@literal null}.
 	 * @return the most suitable method or {@literal null} if no method could be found.
 	 */
+	// 最合适的 {@code findById} 方法选择如下：我们优先选择
+	// <ol>
+	// <li>使用 {@link RepositoryMetadata#getIdType()} 作为第一个参数</li>
+	// <li>使用 {@link Object} 作为第一个参数</li>
+	// </ol>
 	private static Optional<Method> selectMostSuitableFindOneMethod(RepositoryMetadata metadata) {
 
 		return asList(metadata.getIdType(), Object.class).stream()//

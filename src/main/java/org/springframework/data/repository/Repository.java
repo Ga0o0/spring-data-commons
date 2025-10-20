@@ -30,6 +30,14 @@ import org.springframework.stereotype.Indexed;
  * @param <ID> the type of the id of the entity the repository manages
  * @author Oliver Gierke
  */
+// 中央存储库标记接口。捕获要管理的域类型以及域类型的 ID 类型。
+// 其主要用途是保存类型信息，并能够在类路径扫描期间发现扩展此接口的接口，以便轻松创建 Spring Bean。
+// <p>
+// 扩展此接口的域存储库可以通过简单地声明与 {@link CrudRepository} 中声明的方法具有相同签名的方法，选择性地公开 CRUD 方法。
+//
+// @see CrudRepository
+// @param <T> 存储库管理的域类型
+// @param <ID> 存储库管理的实体 ID 的类型
 @Indexed
 public interface Repository<T, ID> {
 

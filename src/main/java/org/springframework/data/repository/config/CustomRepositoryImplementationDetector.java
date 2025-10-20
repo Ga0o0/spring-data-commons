@@ -43,6 +43,10 @@ import org.springframework.util.Assert;
  * @author Jens Schauder
  * @author Mark Paluch
  */
+// 检测 {@link org.springframework.data.repository.Repository} 实例的自定义实现。
+// 如果在构造时配置了 {@link ImplementationDetectionConfiguration}，则在首次访问时会执行必要的组件扫描，
+// 并缓存扫描结果，之后每次根据给定的 {@link ImplementationDetectionConfiguration} 查找实现时都会过滤扫描结果。
+// 如果初始未指定，则每次调用 {@link #detectCustomImplementation(ImplementationLookupConfiguration)} 时都会发起新的组件扫描。
 public class CustomRepositoryImplementationDetector {
 
 	private static final String CUSTOM_IMPLEMENTATION_RESOURCE_PATTERN = "**/*%s.class";
@@ -62,6 +66,10 @@ public class CustomRepositoryImplementationDetector {
 	 * @param resourceLoader must not be {@literal null}.
 	 * @param configuration must not be {@literal null}.
 	 */
+	// 使用给定的 {@link Environment}、{@link ResourceLoader} 和 {@link ImplementationDetectionConfiguration}
+	// 创建一个新的 {@link CustomRepositoryImplementationDetector}。
+	// 后者将被注册用于一次性组件扫描，以查找实现候选对象，并在所有后续的
+	// {@link #detectCustomImplementation(ImplementationLookupConfiguration)} 调用中使用这些候选对象并进行筛选。
 	public CustomRepositoryImplementationDetector(Environment environment, ResourceLoader resourceLoader,
 			ImplementationDetectionConfiguration configuration) {
 
@@ -98,6 +106,7 @@ public class CustomRepositoryImplementationDetector {
 	 * @param lookup must not be {@literal null}.
 	 * @return the {@code AbstractBeanDefinition} of the custom implementation or {@literal null} if none found.
 	 */
+	// 尝试通过类路径扫描检测存储库 bean 的自定义实现。
 	public Optional<AbstractBeanDefinition> detectCustomImplementation(ImplementationLookupConfiguration lookup) {
 
 		Assert.notNull(lookup, "ImplementationLookupConfiguration must not be null");
@@ -126,6 +135,7 @@ public class CustomRepositoryImplementationDetector {
 
 	private Set<BeanDefinition> findCandidateBeanDefinitions(ImplementationDetectionConfiguration config) {
 
+		// 返回用于计算实现类型名称的后缀
 		String postfix = config.getImplementationPostfix();
 
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false,

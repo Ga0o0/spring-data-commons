@@ -27,6 +27,8 @@ import org.springframework.dao.OptimisticLockingFailureException;
  * @see CrudRepository
  * @since 3.0
  */
+// 用于对特定类型的存储库进行通用 CRUD 操作的接口。
+// 这是 {@link CrudRepository} 的扩展，在适用的情况下返回 {@link List} 而不是 {@link Iterable}。
 @NoRepositoryBean
 public interface ListCrudRepository<T, ID> extends CrudRepository<T, ID> {
 

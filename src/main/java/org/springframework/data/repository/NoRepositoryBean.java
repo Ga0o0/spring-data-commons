@@ -32,6 +32,10 @@ import java.lang.annotation.Target;
  *
  * @author Oliver Gierke
  */
+// 用于阻止存储库接口被拾取并因此导致创建实例的注解。
+// <p>
+// 通常，当为所有存储库提供扩展基接口，并与自定义存储库基类结合使用以实现该中间接口中声明的方法时，将使用此注解。
+// 在这种情况下，您通常从中间接口派生具体的存储库接口，但不想为中间接口创建 Spring Bean。
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented

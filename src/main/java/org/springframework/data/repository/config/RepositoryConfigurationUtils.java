@@ -28,6 +28,7 @@ import org.springframework.util.Assert;
  *
  * @author Oliver Gierke
  */
+// 辅助类用于集中配置实现各个地方需要使用的通用功能。
 public interface RepositoryConfigurationUtils {
 
 	/**
@@ -40,6 +41,8 @@ public interface RepositoryConfigurationUtils {
 	 * @param registry must not be {@literal null}.
 	 * @param configurationSource must not be {@literal null}.
 	 */
+	// 注册给定的 {@link RepositoryConfigurationExtension} 以指示特定存储（通过扩展的具体类型表示）的存储库配置已发生。
+	// 对于需要准确检测这种情况的下游组件非常有用。该 bean 定义被标记为 lazy-init，因此如果没有人真正关心它，它就不会被实例化。
 	public static void exposeRegistration(RepositoryConfigurationExtension extension, BeanDefinitionRegistry registry,
 			RepositoryConfigurationSource configurationSource) {
 
@@ -55,6 +58,7 @@ public interface RepositoryConfigurationUtils {
 		}
 
 		// Register extension as bean to indicate repository parsing and registration has happened
+		// --> 译文：将扩展注册为 bean，以指示存储库解析和注册已经发生
 		RootBeanDefinition definition = new RootBeanDefinition(extensionType);
 		definition.setSource(configurationSource.getSource());
 		definition.setRole(AbstractBeanDefinition.ROLE_INFRASTRUCTURE);

@@ -46,6 +46,7 @@ import org.w3c.dom.Element;
  * @author Peter Rietzler
  * @author Jens Schauder
  */
+// 基于 XML 的 {@link RepositoryConfigurationSource}。使用 {@link Element} 属性上定义的配置。
 public class XmlRepositoryConfigurationSource extends RepositoryConfigurationSourceSupport {
 
 	private static final String QUERY_LOOKUP_STRATEGY = "query-lookup-strategy";

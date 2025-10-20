@@ -69,6 +69,7 @@ public interface ConfigurationUtils {
 	 * @return
 	 * @throws IllegalArgumentException if the given {@link ResourceLoader} does not expose a {@link ClassLoader}.
 	 */
+	// 返回给定 {@link ResourceLoader} 使用的 {@link ClassLoader}。
 	public static ClassLoader getRequiredClassLoader(ResourceLoader resourceLoader) {
 
 		Assert.notNull(resourceLoader, "ResourceLoader must not be null");

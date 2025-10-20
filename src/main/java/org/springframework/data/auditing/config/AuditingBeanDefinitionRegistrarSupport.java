@@ -43,6 +43,8 @@ import org.springframework.util.StringUtils;
  * @author Oliver Gierke
  * @author Francisco Soler
  */
+// {@link ImportBeanDefinitionRegistrar} 是用于配置审计支持的存储特定实现的基类。
+// 它根据提供的配置 ({@link AuditingConfiguration}) 注册一个 {@link AuditingHandler}。
 public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBeanDefinitionRegistrar {
 
 	private static final String AUDITOR_AWARE = "auditorAware";
@@ -56,7 +58,9 @@ public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBe
 		Assert.notNull(annotationMetadata, "AnnotationMetadata must not be null");
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
+		// 为 AuditingHandler 注册适当的 BeanDefinition。
 		AbstractBeanDefinition ahbd = registerAuditHandlerBeanDefinition(getConfiguration(annotationMetadata), registry);
+		// 注册监听器最终触发 AuditingHandler。
 		registerAuditListenerBeanDefinition(ahbd, registry);
 	}
 
@@ -67,15 +71,19 @@ public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBe
 	 * @param registry must not be {@literal null}.
 	 * @return
 	 */
+	// 为 {@link AuditingHandler} 注册适当的 BeanDefinition。
 	protected AbstractBeanDefinition registerAuditHandlerBeanDefinition(AuditingConfiguration configuration,
 			BeanDefinitionRegistry registry) {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		Assert.notNull(configuration, "AuditingConfiguration must not be null");
 
+		// 创建一个 BeanDefinitionBuilder 来简化特定于存储的 AuditingHandler 实现的定义。
 		BeanDefinitionBuilder builder = getAuditHandlerBeanDefinitionBuilder(configuration);
+		// 自定义钩子来对 AuditHandler BeanDefinition 进行后处理。
 		postProcess(builder, configuration, registry);
 		AbstractBeanDefinition ahbd = builder.getBeanDefinition();
+		// register BeanDefinition of AuditingHandler
 		registry.registerBeanDefinition(getAuditingHandlerBeanName(), ahbd);
 		return ahbd;
 	}
@@ -88,6 +96,7 @@ public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBe
 	 * @param configuration must not be {@literal null}.
 	 * @since 3.0
 	 */
+	// 自定义钩子来对 AuditHandler BeanDefinition 进行后处理。
 	protected void postProcess(BeanDefinitionBuilder builder, AuditingConfiguration configuration,
 			BeanDefinitionRegistry registry) {}
 
@@ -98,6 +107,7 @@ public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBe
 	 * @param configuration must not be {@literal null}.
 	 * @return
 	 */
+	// 创建一个 {@link BeanDefinitionBuilder} 来简化特定于存储的 {@link AuditingHandler} 实现的定义。
 	protected BeanDefinitionBuilder getAuditHandlerBeanDefinitionBuilder(AuditingConfiguration configuration) {
 
 		Assert.notNull(configuration, "AuditingConfiguration must not be null");
@@ -161,6 +171,7 @@ public abstract class AuditingBeanDefinitionRegistrarSupport implements ImportBe
 	 * @param auditingHandlerDefinition will never be {@literal null}.
 	 * @param registry will never be {@literal null}.
 	 */
+	// 注册监听器最终触发{@link AuditingHandler}。
 	protected abstract void registerAuditListenerBeanDefinition(BeanDefinition auditingHandlerDefinition,
 			BeanDefinitionRegistry registry);
 

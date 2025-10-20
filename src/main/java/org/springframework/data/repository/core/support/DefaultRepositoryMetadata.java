@@ -46,6 +46,7 @@ public class DefaultRepositoryMetadata extends AbstractRepositoryMetadata {
 	 *
 	 * @param repositoryInterface must not be {@literal null}.
 	 */
+	// 为给定的存储库接口创建一个新的 {@link DefaultRepositoryMetadata}。
 	public DefaultRepositoryMetadata(Class<?> repositoryInterface) {
 
 		super(repositoryInterface);

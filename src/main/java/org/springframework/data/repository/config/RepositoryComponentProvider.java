@@ -56,6 +56,7 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 	 * @param includeFilters the {@link TypeFilter}s to select repository interfaces to consider, must not be
 	 *          {@literal null}.
 	 */
+	// 使用给定的 {@link TypeFilter} 创建一个新的 {@link RepositoryComponentProvider} 来包含要拾取的组件。
 	public RepositoryComponentProvider(Iterable<? extends TypeFilter> includeFilters, BeanDefinitionRegistry registry) {
 
 		super(false);
@@ -65,16 +66,20 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 
 		this.registry = registry;
 
+		// 自定义扩展 {@link #addIncludeFilter(TypeFilter)}，用于扩展已添加的 TypeFilter。
+		// 对于已添加的 TypeFilter，我们将注册两个过滤器：一个额外强制执行 RepositoryDefinition 注解，另一个强制执行 Repository 接口的扩展。
 		if (includeFilters.iterator().hasNext()) {
 			for (TypeFilter filter : includeFilters) {
 				addIncludeFilter(filter);
 			}
 		} else {
+			// add Include TypeFilters
 			super.addIncludeFilter(new InterfaceTypeFilter(Repository.class));
 			super.addIncludeFilter(new AnnotationTypeFilter(RepositoryDefinition.class, true, true));
 		}
 
-		addExcludeFilter(new AnnotationTypeFilter(NoRepositoryBean.class));
+		// @NoRepositoryBean：用于阻止存储库接口被拾取并因此导致创建实例的注解。
+		addExcludeFilter(new AnnotationTypeFilter(NoRepositoryBean.class)); // add Exclude TypeFilters
 	}
 
 	/**
@@ -84,19 +89,24 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 	 *
 	 * @see ClassPathScanningCandidateComponentProvider#addIncludeFilter(TypeFilter)
 	 */
+	// 自定义扩展 {@link #addIncludeFilter(TypeFilter)}，用于扩展已添加的 {@link TypeFilter}。
+	// 对于已添加的 {@link TypeFilter}，我们将注册两个过滤器：一个额外强制执行 {@link RepositoryDefinition} 注解，另一个强制执行 {@link Repository} 的扩展。
 	@Override
 	public void addIncludeFilter(TypeFilter includeFilter) {
 
 		List<TypeFilter> filterPlusInterface = new ArrayList<>(2);
 		filterPlusInterface.add(includeFilter);
+		// 创建一个用于 Repository 接口的新 InterfaceTypeFilter
 		filterPlusInterface.add(new InterfaceTypeFilter(Repository.class));
 
+		// 包含 Repository 接口
 		super.addIncludeFilter(new AllTypeFilter(filterPlusInterface));
 
 		List<TypeFilter> filterPlusAnnotation = new ArrayList<>(2);
 		filterPlusAnnotation.add(includeFilter);
 		filterPlusAnnotation.add(new AnnotationTypeFilter(RepositoryDefinition.class, true, true));
 
+		// 包含 @RepositoryDefinition（用于划分应创建存储库代理的接口的注解） 注解
 		super.addIncludeFilter(new AllTypeFilter(filterPlusAnnotation));
 	}
 
@@ -113,6 +123,7 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 	/**
 	 * Customizes the repository interface detection and triggers annotation detection on them.
 	 */
+	// 自定义存储库接口检测并触发对其的注释检测。
 	@Override
 	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
 
@@ -146,6 +157,7 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 	 *
 	 * @param considerNestedRepositoryInterfaces
 	 */
+	// 控制是否应将嵌套的内部类 {@link Repository} 接口定义用于自动发现。默认值为 {@literal false}。
 	public void setConsiderNestedRepositoryInterfaces(boolean considerNestedRepositoryInterfaces) {
 		this.considerNestedRepositoryInterfaces = considerNestedRepositoryInterfaces;
 	}
@@ -170,6 +182,7 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 		 *
 		 * @param targetType
 		 */
+		// 创建一个新的{@link InterfaceTypeFilter}。
 		public InterfaceTypeFilter(Class<?> targetType) {
 			super(targetType);
 		}
@@ -194,6 +207,7 @@ class RepositoryComponentProvider extends ClassPathScanningCandidateComponentPro
 		 *
 		 * @param delegates must not be {@literal null}.
 		 */
+		// 如果所有给定的代表都匹配，则创建一个新的 {@link AllTypeFilter} 来匹配。
 		private AllTypeFilter {
 
 			Assert.notNull(delegates, "TypeFilter delegates must not be null");

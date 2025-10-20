@@ -37,6 +37,7 @@ import org.springframework.util.StringUtils;
  * @author Mark Paluch
  * @author Johannes Englmeier
  */
+// {@link RepositoryConfiguration} 的默认实现。
 public class DefaultRepositoryConfiguration<T extends RepositoryConfigurationSource>
 		implements RepositoryConfiguration<T> {
 

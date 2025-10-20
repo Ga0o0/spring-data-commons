@@ -31,6 +31,8 @@ import org.springframework.data.domain.Sort;
  * @see Page
  * @see CrudRepository
  */
+// 存储库片段提供使用分页和排序抽象检索实体的方法。
+// 在许多情况下，这将与 {@link CrudRepository} 或类似方法结合使用，或与手动添加的方法结合使用，以提供 CRUD 功能。
 @NoRepositoryBean
 public interface PagingAndSortingRepository<T, ID> extends Repository<T, ID> {
 

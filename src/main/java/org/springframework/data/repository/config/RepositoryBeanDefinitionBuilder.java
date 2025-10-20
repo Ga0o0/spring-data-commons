@@ -60,6 +60,7 @@ import org.springframework.util.StringUtils;
  * @author Peter Rietzler
  * @author Mark Paluch
  */
+// Builder 创建 {@link BeanDefinitionBuilder} 实例，最终创建 Spring Data 存储库实例。
 class RepositoryBeanDefinitionBuilder {
 
 	private static final Log logger = LogFactory.getLog(RepositoryBeanDefinitionBuilder.class);
@@ -82,6 +83,7 @@ class RepositoryBeanDefinitionBuilder {
 	 * @param resourceLoader must not be {@literal null}.
 	 * @param environment must not be {@literal null}.
 	 */
+	// 从给定的 {@link BeanDefinitionRegistry}、{@link RepositoryConfigurationExtension} 和 {@link ResourceLoader} 创建一个新的 {@link RepositoryBeanDefinitionBuilder}。
 	public RepositoryBeanDefinitionBuilder(BeanDefinitionRegistry registry, RepositoryConfigurationExtension extension,
 			RepositoryConfigurationSource configurationSource, ResourceLoader resourceLoader, Environment environment) {
 
@@ -92,10 +94,12 @@ class RepositoryBeanDefinitionBuilder {
 		this.registry = registry;
 		this.extension = extension;
 		this.resourceLoader = resourceLoader;
+		// 创建一个 RepositoryFactoriesLoader 实例，该实例将使用给定的类加载器从默认位置加载并实例化工厂实现。
 		this.factoriesLoader = RepositoryFactoriesLoader.forDefaultResourceLocation(resourceLoader.getClassLoader());
 		this.metadataReaderFactory = new CachingMetadataReaderFactory(resourceLoader);
 
-		this.fragmentMetadata = new FragmentMetadata(metadataReaderFactory);
+		this.fragmentMetadata = new FragmentMetadata(metadataReaderFactory); // 已发现的 Repository 片段接口的值对象。
+		// CustomRepositoryImplementationDetector -> 检测 {@link org.springframework.data.repository.Repository} 实例的自定义实现。
 		this.implementationDetector = new CustomRepositoryImplementationDetector(environment, resourceLoader,
 				configurationSource.toImplementationDetectionConfiguration(metadataReaderFactory));
 	}
@@ -107,6 +111,7 @@ class RepositoryBeanDefinitionBuilder {
 	 * @param configuration must not be {@literal null}.
 	 * @return
 	 */
+	// 从给定的 {@link BeanDefinitionRegistry} 和 {@link ResourceLoader} 构建一个新的 {@link BeanDefinitionBuilder}
 	public BeanDefinitionBuilder build(RepositoryConfiguration<?> configuration) {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
@@ -122,25 +127,29 @@ class RepositoryBeanDefinitionBuilder {
 		builder.setLazyInit(configuration.isLazyInit());
 		builder.setPrimary(configuration.isPrimary());
 
-		configuration.getRepositoryBaseClassName()//
+		configuration.getRepositoryBaseClassName()// 返回要使用的存储库基类的名称，如果要应用特定于商店的默认值，则返回 null。
 				.ifPresent(it -> builder.addPropertyValue("repositoryBaseClass", it));
 
+		// Builder 使用属性为 NamedQueries 实例创建 BeanDefinition
 		NamedQueriesBeanDefinitionBuilder definitionBuilder = new NamedQueriesBeanDefinitionBuilder(
-				extension.getDefaultNamedQueryLocation());
+				extension.getDefaultNamedQueryLocation()); // extension.getDefaultNamedQueryLocation() --> 返回 Spring Data 命名查询的默认位置
 		configuration.getNamedQueriesLocation().ifPresent(definitionBuilder::setLocations);
 
 		String namedQueriesBeanName = BeanDefinitionReaderUtils
 				.uniqueBeanName(extension.getModuleIdentifier() + ".named-queries", registry);
+		// 从给定的源构建一个新的 BeanDefinition
 		BeanDefinition namedQueries = definitionBuilder.build(configuration.getSource());
 		registry.registerBeanDefinition(namedQueriesBeanName, namedQueries);
 
 		builder.addPropertyValue("namedQueries", new RuntimeBeanReference(namedQueriesBeanName));
 
+		// 尝试通过类路径扫描检测存储库 bean 的自定义实现
 		registerCustomImplementation(configuration).ifPresent(it -> {
 			builder.addPropertyReference("customImplementation", it);
 			builder.addDependsOn(it);
 		});
 
+		// 注册 RepositoryFragments
 		String fragmentsBeanName = registerRepositoryFragments(configuration);
 		builder.addPropertyValue("repositoryFragments", new RuntimeBeanReference(fragmentsBeanName));
 
@@ -190,8 +199,10 @@ class RepositoryBeanDefinitionBuilder {
 
 	private Optional<String> registerCustomImplementation(RepositoryConfiguration<?> configuration) {
 
+		// 用于查找存储库或片段接口的实现类型的配置
 		ImplementationLookupConfiguration lookup = configuration.toLookupConfiguration(metadataReaderFactory);
 
+		// 返回要查找的实现的 bean 名称
 		String configurationBeanName = lookup.getImplementationBeanName();
 
 		// Already a bean configured?
@@ -204,6 +215,7 @@ class RepositoryBeanDefinitionBuilder {
 			return Optional.of(configurationBeanName);
 		}
 
+		// 尝试通过类路径扫描检测存储库 bean 的自定义实现
 		return implementationDetector.detectCustomImplementation(lookup)
 				.map(it -> potentiallyRegisterRepositoryImplementation(configuration, it));
 	}
@@ -211,7 +223,7 @@ class RepositoryBeanDefinitionBuilder {
 	private String registerRepositoryFragments(RepositoryConfiguration<?> configuration) {
 
 		BeanDefinitionBuilder fragmentsBuilder = BeanDefinitionBuilder
-				.rootBeanDefinition(RepositoryFragmentsFactoryBean.class) //
+				.rootBeanDefinition(RepositoryFragmentsFactoryBean.class) // 用于创建 RepositoryFragments 的工厂 bean
 				.setRole(ROLE_INFRASTRUCTURE);
 
 		List<String> fragmentBeanNames = registerRepositoryFragmentsImplementation(configuration) //
@@ -393,6 +405,7 @@ class RepositoryBeanDefinitionBuilder {
 		 * @param classLoader the classloader used to instantiate the factories
 		 * @param factories a map of factory class name to implementation class names
 		 */
+		// 创建一个新的 {@link SpringFactoriesLoader} 实例。
 		protected RepositoryFactoriesLoader(@Nullable ClassLoader classLoader, Map<String, List<String>> factories) {
 			super(classLoader, factories);
 			this.factories = factories;
@@ -406,9 +419,11 @@ class RepositoryBeanDefinitionBuilder {
 		 * @return a {@link RepositoryFactoriesLoader} instance
 		 * @see #forResourceLocation(String)
 		 */
+		// 创建一个 {@link RepositoryFactoriesLoader} 实例，该实例将使用给定的类加载器从默认位置加载并实例化工厂实现。
 		public static RepositoryFactoriesLoader forDefaultResourceLocation(@Nullable ClassLoader classLoader) {
 			ClassLoader resourceClassLoader = (classLoader != null ? classLoader
 					: SpringFactoriesLoader.class.getClassLoader());
+			// FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories"
 			return new RepositoryFactoriesLoader(classLoader,
 					loadFactoriesResource(resourceClassLoader, FACTORIES_RESOURCE_LOCATION));
 		}

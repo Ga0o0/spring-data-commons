@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.data.querydsl.QUser;
+import org.springframework.data.querydsl.suffix.QUser;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.querydsl.User;
 import org.springframework.data.repository.support.Repositories;

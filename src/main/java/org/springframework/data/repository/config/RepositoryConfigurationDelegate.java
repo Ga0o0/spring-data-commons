@@ -94,9 +94,11 @@ public class RepositoryConfigurationDelegate {
 	 * @param resourceLoader must not be {@literal null}.
 	 * @param environment must not be {@literal null}.
 	 */
+	// 为给定的 {@link RepositoryConfigurationSource} 和 {@link ResourceLoader} 和 {@link Environment} 创建一个新的 {@link RepositoryConfigurationDelegate}。
 	public RepositoryConfigurationDelegate(RepositoryConfigurationSource configurationSource,
 			ResourceLoader resourceLoader, Environment environment) {
 
+		// configurationSource 是否是基于 XML 的 RepositoryConfigurationSource
 		this.isXml = configurationSource instanceof XmlRepositoryConfigurationSource;
 		boolean isAnnotation = configurationSource instanceof AnnotationRepositoryConfigurationSource;
 
@@ -138,20 +140,23 @@ public class RepositoryConfigurationDelegate {
 	 * @see org.springframework.data.repository.config.RepositoryConfigurationExtension
 	 * @see org.springframework.beans.factory.support.BeanDefinitionRegistry
 	 */
+	// 在给定的 {@link BeanDefinitionRegistry} 中注册发现的存储库。
 	public List<BeanComponentDefinition> registerRepositoriesIn(BeanDefinitionRegistry registry,
 			RepositoryConfigurationExtension extension) {
 
-		if (logger.isInfoEnabled()) {
+		if (logger.isInfoEnabled()) { // 以 %s 模式引导 Spring Data %s 存储库。
 			logger.info(LogMessage.format("Bootstrapping Spring Data %s repositories in %s mode.", //
 					extension.getModuleName(), configurationSource.getBootstrapMode().name()));
 		}
 
+		// 用于为仓库根节点注册其他 bean 定义的回调。
 		extension.registerBeansForRoot(registry, configurationSource);
 
+		// 从给定的 BeanDefinitionRegistry、RepositoryConfigurationExtension 和 ResourceLoader 创建一个新的 RepositoryBeanDefinitionBuilder。
 		RepositoryBeanDefinitionBuilder builder = new RepositoryBeanDefinitionBuilder(registry, extension,
 				configurationSource, resourceLoader, environment);
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) { // 正在扫描包 %s 中的 %s 存储库
 			logger.debug(LogMessage.format("Scanning for %s repositories in packages %s.", //
 					extension.getModuleName(), //
 					configurationSource.getBasePackages().stream().collect(Collectors.joining(", "))));
@@ -166,31 +171,42 @@ public class RepositoryConfigurationDelegate {
 				() -> configurationSource.getBasePackages().stream().collect(Collectors.joining(", ")));
 		watch.start();
 
+		// 返回通过给定的 RepositoryConfigurationSource 获得的所有 RepositoryConfiguration
 		Collection<RepositoryConfiguration<RepositoryConfigurationSource>> configurations = extension
 				.getRepositoryConfigurations(configurationSource, resourceLoader, inMultiStoreMode);
 
 		List<BeanComponentDefinition> definitions = new ArrayList<>();
 
+		// 按存储库名称存储配置
 		Map<String, RepositoryConfiguration<?>> configurationsByRepositoryName = new HashMap<>(configurations.size());
+		// 按存储库名称存储元数据
 		Map<String, RepositoryConfigurationAdapter<?>> metadataByRepositoryBeanName = new HashMap<>(configurations.size());
 
+		// RepositoryConfiguration --> 单个存储库实例的配置信息
 		for (RepositoryConfiguration<? extends RepositoryConfigurationSource> configuration : configurations) {
 
+			// key: 存储库的接口名称；value：RepositoryConfiguration
 			configurationsByRepositoryName.put(configuration.getRepositoryInterface(), configuration);
 
+			// 从给定的 BeanDefinitionRegistry 和 ResourceLoader 构建一个新的 BeanDefinitionBuilder
 			BeanDefinitionBuilder definitionBuilder = builder.build(configuration);
+			// 回调以对 BeanDefinition 进行后期处理，并在必要时调整配置。
 			extension.postProcess(definitionBuilder, configurationSource);
 
 			if (isXml) {
+				// 回调以对从 XML 构建的 BeanDefinition 进行后期处理，并在必要时调整配置。
 				extension.postProcess(definitionBuilder, (XmlRepositoryConfigurationSource) configurationSource);
 			} else {
+				// 回调以对由注释构建的 BeanDefinition 进行后期处理，并在必要时调整配置。
 				extension.postProcess(definitionBuilder, (AnnotationRepositoryConfigurationSource) configurationSource);
 			}
 
 			RootBeanDefinition beanDefinition = (RootBeanDefinition) definitionBuilder.getBeanDefinition();
+			// getRepositoryFactoryBeanType() --> 从给定的 RepositoryConfiguration 返回存储库工厂 bean 类型作为加载的 Class。
 			beanDefinition.setTargetType(getRepositoryFactoryBeanType(configuration));
 			beanDefinition.setResourceDescription(configuration.getResourceDescription());
 
+			// 返回 beanDefinition 的名称
 			String beanName = configurationSource.generateBeanName(beanDefinition);
 
 			if (logger.isTraceEnabled()) {
@@ -203,6 +219,7 @@ public class RepositoryConfigurationDelegate {
 			definitions.add(new BeanComponentDefinition(beanDefinition, beanName));
 		}
 
+		// 在默认的 ContextAnnotationAutowireCandidateResolver 上注册一个 LazyRepositoryInjectionPointResolver，使惰性存储库的注入点也变为惰性。
 		potentiallyLazifyRepositories(configurationsByRepositoryName, registry, configurationSource.getBootstrapMode());
 
 		watch.stop();
@@ -219,6 +236,10 @@ public class RepositoryConfigurationDelegate {
 		// TODO: AOT Processing -> guard this one with a flag so it's not always present
 		// TODO: With regard to AOT Processing, perhaps we need to be smart and detect whether "core" AOT components are
 		// (or rather configuration is) present on the classpath to enable Spring Data AOT component registration.
+		// --> 译文：
+		// TODO：AOT 处理 -> 使用标志保护此组件，使其并非始终存在
+		// TODO：关于 AOT 处理，也许我们需要更智能地检测“核心”AOT 组件
+		// （或者更确切地说是配置）是否存在于类路径中，以启用 Spring Data AOT 组件注册。
 		registerAotComponents(registry, extension, metadataByRepositoryBeanName);
 
 		return definitions;
@@ -247,6 +268,8 @@ public class RepositoryConfigurationDelegate {
 	 * @param configurations must not be {@literal null}.
 	 * @param registry must not be {@literal null}.
 	 */
+	// 在默认的 {@link ContextAnnotationAutowireCandidateResolver} 上注册一个 {@link LazyRepositoryInjectionPointResolver}，使惰性存储库的注入点也变为惰性。
+	// 如果已配置了 {@link LazyRepositoryInjectionPointResolver} 的配置，则会对其进行扩展。
 	private static void potentiallyLazifyRepositories(Map<String, RepositoryConfiguration<?>> configurations,
 			BeanDefinitionRegistry registry, BootstrapMode mode) {
 
@@ -316,9 +339,11 @@ public class RepositoryConfigurationDelegate {
 	 * @param configuration must not be {@literal null}.
 	 * @return can be {@literal null}.
 	 */
+	// 从给定的 {@link RepositoryConfiguration} 返回存储库工厂 bean 类型作为加载的 {@link Class}。
 	@Nullable
 	private ResolvableType getRepositoryFactoryBeanType(RepositoryConfiguration<?> configuration) {
 
+		// 返回存储库的接口名称
 		String interfaceName = configuration.getRepositoryInterface();
 		ClassLoader classLoader = resourceLoader.getClassLoader() == null
 				? org.springframework.util.ClassUtils.getDefaultClassLoader()
@@ -326,18 +351,21 @@ public class RepositoryConfigurationDelegate {
 
 		classLoader = classLoader != null ? classLoader : getClass().getClassLoader();
 
+		// 使用给定的 ClassLoader 加载具有给定名称的类。
 		Class<?> repositoryInterface = ClassUtils.loadIfPresent(interfaceName, classLoader);
 
 		if (repositoryInterface == null) {
 			return null;
 		}
 
+		// 返回要使用的存储库工厂 bean 类的名称。
 		Class<?> factoryBean = ClassUtils.loadIfPresent(configuration.getRepositoryFactoryBeanClassName(), classLoader);
 
 		if (factoryBean == null) {
 			return null;
 		}
 
+		// 为给定的存储库接口创建一个新的 RepositoryMetadata
 		RepositoryMetadata metadata = AbstractRepositoryMetadata.getMetadata(repositoryInterface);
 		List<Class<?>> types = List.of(repositoryInterface, metadata.getDomainType(), metadata.getIdType());
 
@@ -370,6 +398,7 @@ public class RepositoryConfigurationDelegate {
 	 * @author Oliver Gierke
 	 * @since 2.1
 	 */
+	// 客户 {@link ContextAnnotationAutowireCandidateResolver} 也认为所有惰性存储库的注入点都是惰性的。
 	static class LazyRepositoryInjectionPointResolver extends ContextAnnotationAutowireCandidateResolver {
 
 		private static final Log logger = LogFactory.getLog(LazyRepositoryInjectionPointResolver.class);

@@ -29,6 +29,7 @@ import org.springframework.lang.Nullable;
  * @author Oliver Gierke
  * @author Mark Paluch
  */
+// 单个存储库实例的配置信息。
 public interface RepositoryConfiguration<T extends RepositoryConfigurationSource> {
 
 	/**
@@ -51,6 +52,7 @@ public interface RepositoryConfiguration<T extends RepositoryConfigurationSource
 	 *
 	 * @return
 	 */
+	// 返回存储库的接口名称。
 	String getRepositoryInterface();
 
 	/**
@@ -75,6 +77,7 @@ public interface RepositoryConfiguration<T extends RepositoryConfigurationSource
 	 * @return
 	 * @since 1.11
 	 */
+	// 返回要使用的存储库基类的名称，如果要应用特定于商店的默认值，则返回 {@literal null}。
 	Optional<String> getRepositoryBaseClassName();
 
 	/**
@@ -82,6 +85,7 @@ public interface RepositoryConfiguration<T extends RepositoryConfigurationSource
 	 *
 	 * @return
 	 */
+	// 返回要使用的存储库工厂 bean 类的名称。
 	String getRepositoryFactoryBeanClassName();
 
 	/**
@@ -144,6 +148,7 @@ public interface RepositoryConfiguration<T extends RepositoryConfigurationSource
 	 * @return will never be {@literal null}.
 	 * @since 2.1
 	 */
+	// 返回用于此存储库的 {@link ImplementationDetectionConfiguration}。
 	ImplementationDetectionConfiguration toImplementationDetectionConfiguration(MetadataReaderFactory factory);
 
 	/**
